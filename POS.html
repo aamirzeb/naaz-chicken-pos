@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAAZ CHICKEN </title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+  <h1>&#128020; NAAZ CHICKEN </h1>
+  <p>Bharat Bhawan, Chakradharpur</p>
+</div>
+
+<!-- NAV -->
+
+<div class="top-nav">
+
+  <button class="nav-btn pos-btn" onclick="showPOS()">
+    POS Billing
+  </button>
+
+  <button class="nav-btn admin-btn" onclick="openAdminPopup()">
+    Admin Panel
+  </button>
+
+</div>
+
+<!-- POS SECTION -->
+
+<div class="container" id="posSection">
+
+  <div class="left-panel">
+
+    <div class="section-title">
+      Select Chicken Products
+    </div>
+
+    <div class="product-grid">
+
+      <div class="product-card"
+      onclick="selectProduct('Broiler Chicken Gota',220,event)">
+        <div class="product-name">Broiler Chicken Gota</div>
+        <div class="product-price">220/kg</div>
+      </div>
+
+      <div class="product-card"
+      onclick="selectProduct('Broiler Meat',240,event)">
+        <div class="product-name">Broiler Meat</div>
+        <div class="product-price">240/kg</div>
+      </div>
+
+      <div class="product-card"
+      onclick="selectProduct('Broiler Meat Boneless',280,event)">
+        <div class="product-name">Broiler Meat Boneless</div>
+        <div class="product-price">280/kg</div>
+      </div>
+
+      <div class="product-card"
+      onclick="selectProduct('Broiler Leg Piece',260,event)">
+        <div class="product-name">Broiler Leg Piece</div>
+        <div class="product-price">260/kg</div>
+      </div>
+
+      <div class="product-card"
+      onclick="selectProduct('Broiler Wings',180,event)">
+        <div class="product-name">Broiler Wings</div>
+        <div class="product-price">180/kg</div>
+      </div>
+
+      <div class="product-card"
+      onclick="selectProduct('Broiler Pot Kalegi',200,event)">
+        <div class="product-name">Broiler Pot Kalegi</div>
+        <div class="product-price">200/kg</div>
+      </div>
+
+    </div>
+
+    <h3 style="margin-top:25px;">Payment Mode</h3>
+
+    <div class="payment-mode">
+
+      <label>
+        <input type="radio" name="paymentMode" value="Cash" checked>
+        <span>Cash</span>
+      </label>
+
+      <label>
+        <input type="radio" name="paymentMode" value="Online">
+        <span>Online</span>
+      </label>
+
+    </div>
+
+    <h3 style="margin-top:20px;">Enter Weight</h3>
+
+    <input type="number" id="weight" placeholder="Enter weight">
+
+    <select id="unit">
+      <option value="kg">Kilogram (kg)</option>
+      <option value="gram">Gram (g)</option>
+    </select>
+
+    <button class="add-btn" onclick="openCustomerPopup()">
+      Add To Bill
+    </button>
+
+  </div>
+
+  <div class="right-panel">
+
+    <div class="section-title">
+      Checkout Page
+    </div>
+
+    <div id="cart"></div>
+
+    <div class="total-box">
+      <span id="total">0</span>
+    </div>
+
+    <div class="qr-box">
+
+      <h3>Scan & Pay</h3>
+
+      <img id="upiQR" src="">
+
+      <p style="margin-top:10px;">
+        UPI ID: paytmqr6m6owz@ptys
+      </p>
+
+    </div>
+
+    <button class="print-btn" onclick="printReceipt()">
+      Print Receipt
+    </button>
+
+    <button class="print-btn"
+    style="background:#2563eb;"
+    onclick="newOrder()">
+      New Order
+    </button>
+
+  </div>
+
+</div>
+
+<!-- CUSTOMER POPUP -->
+
+<div class="popup" id="customerPopup">
+
+  <div class="popup-content">
+
+    <h2>Customer Details</h2>
+
+    <input type="text"
+    id="customerName"
+    placeholder="Enter customer name">
+
+    <button class="add-btn"
+    onclick="confirmAddToCart()">
+      Confirm Add
+    </button>
+
+    <button class="print-btn"
+    style="background:#64748b;"
+    onclick="closeCustomerPopup()">
+      Cancel
+    </button>
+
+  </div>
+
+</div>
+
+<!-- ADMIN LOGIN -->
+
+<div class="popup" id="adminPopup">
+
+  <div class="popup-content">
+
+    <h2>Admin Login</h2>
+
+    <input type="password"
+    id="adminPassword"
+    placeholder="Enter Password">
+
+    <button class="add-btn"
+    onclick="checkAdminPassword()">
+      Login
+    </button>
+
+    <button class="print-btn"
+    style="background:#64748b;"
+    onclick="closeAdminPopup()">
+      Cancel
+    </button>
+
+  </div>
+
+</div>
+
+<!-- ADMIN -->
+
+<div class="admin-section" id="adminSection">
+
+  <div class="admin-cards">
+  <div class="table-box">
+
+  <h2 style="margin-bottom:15px;">
+    Product Management
+  </h2>
+
+  <input type="text" id="newProductName" placeholder="Product Name">
+  <input type="number" id="newProductPrice" placeholder="Price Per KG">
+
+  <button class="add-btn" onclick="addProduct()">
+    Add / Update Product
+  </button>
+
+  <div id="productList"></div>
+
+</div>
+
+    <div class="admin-card">
+      <h3>Total Orders</h3>
+      <p id="totalOrders">0</p>
+    </div>
+
+    <div class="admin-card">
+      <h3>Total Sales</h3>
+      <p id="totalSales">?0</p>
+    </div>
+
+  </div>
+
+  <div class="table-box">
+
+    <div class="order-filter">
+
+      <button class="filter-btn active-filter"
+      onclick="filterOrders('all',event)">
+        All Orders
+      </button>
+
+      <button class="filter-btn"
+      onclick="filterOrders('Cash',event)">
+        Cash
+      </button>
+
+      <button class="filter-btn"
+      onclick="filterOrders('Online',event)">
+        Online
+      </button>
+
+    </div>
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>S.No</th>
+          <th>Customer</th>
+          <th>Product</th>
+          <th>Quantity</th>
+          <th>Amount</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+
+      <tbody id="ordersTable"></tbody>
+
+    </table>
+
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
