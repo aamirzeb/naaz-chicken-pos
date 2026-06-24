@@ -34,53 +34,17 @@
 
 <!-- POS SECTION -->
 
+
+
 <div class="container" id="posSection">
 
-  <div class="left-panel">
+  <div class="left-panel" id="leftPanel">
 
     <div class="section-title">
       Select Chicken Products
     </div>
 
-    <div class="product-grid">
-
-      <div class="product-card"
-      onclick="selectProduct('Broiler Chicken Gota',220,event)">
-        <div class="product-name">Broiler Chicken Gota</div>
-        <div class="product-price">220/kg</div>
-      </div>
-
-      <div class="product-card"
-      onclick="selectProduct('Broiler Meat',240,event)">
-        <div class="product-name">Broiler Meat</div>
-        <div class="product-price">240/kg</div>
-      </div>
-
-      <div class="product-card"
-      onclick="selectProduct('Broiler Meat Boneless',280,event)">
-        <div class="product-name">Broiler Meat Boneless</div>
-        <div class="product-price">280/kg</div>
-      </div>
-
-      <div class="product-card"
-      onclick="selectProduct('Broiler Leg Piece',260,event)">
-        <div class="product-name">Broiler Leg Piece</div>
-        <div class="product-price">260/kg</div>
-      </div>
-
-      <div class="product-card"
-      onclick="selectProduct('Broiler Wings',180,event)">
-        <div class="product-name">Broiler Wings</div>
-        <div class="product-price">180/kg</div>
-      </div>
-
-      <div class="product-card"
-      onclick="selectProduct('Broiler Pot Kalegi',200,event)">
-        <div class="product-name">Broiler Pot Kalegi</div>
-        <div class="product-price">200/kg</div>
-      </div>
-
-    </div>
+    <div class="product-grid" id="productGrid"></div>
 
     <h3 style="margin-top:25px;">Payment Mode</h3>
 
@@ -96,24 +60,32 @@
         <span>Online</span>
       </label>
 
+      <label>
+        <input type="radio" name="paymentMode" value="Due">
+        <span>Due</span>
+      </label>
+
     </div>
 
     <h3 style="margin-top:20px;">Enter Weight</h3>
 
-    <input type="number" id="weight" placeholder="Enter weight">
+    <input type="number"
+           id="weight"
+           placeholder="Enter weight">
 
     <select id="unit">
       <option value="kg">Kilogram (kg)</option>
       <option value="gram">Gram (g)</option>
     </select>
 
-    <button class="add-btn" onclick="openCustomerPopup()">
+    <button class="add-btn"
+            onclick="openCustomerPopup()">
       Add To Bill
     </button>
 
   </div>
 
-  <div class="right-panel">
+  <div class="right-panel" id="rightPanel">
 
     <div class="section-title">
       Checkout Page
@@ -137,19 +109,23 @@
 
     </div>
 
-    <button class="print-btn" onclick="printReceipt()">
+    <button class="print-btn"
+            onclick="printReceipt()">
       Print Receipt
     </button>
 
     <button class="print-btn"
-    style="background:#2563eb;"
-    onclick="newOrder()">
+            style="background:#2563eb;"
+            onclick="newOrder()">
       New Order
     </button>
 
   </div>
 
 </div>
+
+  <!-- Payment Mode Here -->
+
 
 <!-- CUSTOMER POPUP -->
 
@@ -216,8 +192,17 @@
     Product Management
   </h2>
 
-  <input type="text" id="newProductName" placeholder="Product Name">
-  <input type="number" id="newProductPrice" placeholder="Price Per KG">
+ <input type="text"
+id="newProductName"
+placeholder="Product Name">
+
+<input type="number"
+id="newProductPrice"
+placeholder="Price Per KG">
+
+<input type="file"
+id="newProductImage"
+accept="image/*">
 
   <button class="add-btn" onclick="addProduct()">
     Add / Update Product
@@ -236,6 +221,10 @@
       <h3>Total Sales</h3>
       <p id="totalSales">?0</p>
     </div>
+    <div class="admin-card">
+  <h3>Due Amount</h3>
+  <p id="dueAmount">₹0</p>
+</div>
 
   </div>
 
@@ -243,20 +232,25 @@
 
     <div class="order-filter">
 
-      <button class="filter-btn active-filter"
-      onclick="filterOrders('all',event)">
-        All Orders
-      </button>
+    <button class="filter-btn active-filter"
+onclick="filterOrders('all',event)">
+  All Orders
+</button>
 
-      <button class="filter-btn"
-      onclick="filterOrders('Cash',event)">
-        Cash
-      </button>
+<button class="filter-btn"
+onclick="filterOrders('Cash',event)">
+  Cash
+</button>
 
-      <button class="filter-btn"
-      onclick="filterOrders('Online',event)">
-        Online
-      </button>
+<button class="filter-btn"
+onclick="filterOrders('Online',event)">
+  Online
+</button>
+
+<button class="filter-btn"
+onclick="filterOrders('Due',event)">
+  Due
+</button>
 
     </div>
 
@@ -264,13 +258,14 @@
 
       <thead>
         <tr>
-          <th>S.No</th>
-          <th>Customer</th>
-          <th>Product</th>
-          <th>Quantity</th>
-          <th>Amount</th>
-          <th>Date</th>
-        </tr>
+  <th>S.No</th>
+  <th>Customer</th>
+  <th>Payment</th>
+  <th>Product</th>
+  <th>Quantity</th>
+  <th>Amount</th>
+  <th>Date</th>
+</tr>
       </thead>
 
       <tbody id="ordersTable"></tbody>
