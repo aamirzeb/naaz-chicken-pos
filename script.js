@@ -1,13 +1,226 @@
 let selectedProduct = '';
 let selectedPrice = 0;
 
-let cart = [];
-let allOrders = [];
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+let allOrders =
+JSON.parse(localStorage.getItem("allOrders")) || [];
+
+let products =
+JSON.parse(localStorage.getItem("products")) || [
+  
+];
 
 let currentFilter = 'all';
 
 const ADMIN_PASSWORD = 'admin123';
+function renderProducts() {
 
+  const grid =
+  document.getElementById("productGrid");
+
+  grid.innerHTML = "";
+
+  products.forEach(product => {
+
+    grid.innerHTML += `
+      <div class="product-card"
+      onclick="selectProduct(
+      '${product.name}',
+      ${product.price},
+      event
+      )">
+
+      ${
+        product.image
+        ?
+        `<img
+        src="${product.image}"
+        class="product-img">`
+        :
+        ""
+      }
+
+      <div class="product-name">
+        ${product.name}
+      </div>
+
+      <div class="product-price">
+        ₹${product.price}/kg
+      </div>
+
+      </div>
+    `;
+  });
+}
+/* Add Product */
+
+function addProduct() {
+
+  const name =
+  document.getElementById(
+  "newProductName").value;
+
+  const price =
+  parseFloat(
+  document.getElementById(
+  "newProductPrice").value);
+
+  const file =
+  document.getElementById(
+  "newProductImage").files[0];
+
+  if(!name || !price){
+
+    alert("Fill all fields");
+    return;
+  }
+
+  if(file){
+
+    const reader =
+    new FileReader();
+
+    reader.onload = function(e){
+
+      products.push({
+
+        id: Date.now(),
+
+        name,
+
+        price,
+
+        image:e.target.result
+
+      });
+
+      localStorage.setItem(
+      "products",
+      JSON.stringify(products));
+
+      renderProducts();
+      renderProductList();
+
+    };
+
+    reader.readAsDataURL(file);
+
+  } else {
+
+    products.push({
+
+      id: Date.now(),
+
+      name,
+
+      price,
+
+      image:""
+
+    });
+
+    localStorage.setItem(
+    "products",
+    JSON.stringify(products));
+
+    renderProducts();
+    renderProductList();
+  }
+
+}
+
+function renderProductList(){
+
+const list =
+document.getElementById(
+"productList");
+
+list.innerHTML = "";
+
+products.forEach(product=>{
+
+list.innerHTML += `
+
+<div class="cart-item">
+
+<div>
+
+<strong>
+${product.name}
+</strong>
+
+<br>
+
+₹${product.price}/kg
+
+</div>
+
+<div>
+
+<button
+class="edit-btn"
+onclick="editProduct(
+${product.id}
+)">
+Edit
+</button>
+
+<button
+class="delete-btn"
+onclick="deleteProduct(
+${product.id}
+)">
+Delete
+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+function editProduct(id){
+
+const product =
+products.find(
+p=>p.id===id
+);
+
+let newName =
+prompt(
+"Product Name",
+product.name
+);
+
+let newPrice =
+prompt(
+"Price",
+product.price
+);
+
+if(newName){
+
+product.name =
+newName;
+
+product.price =
+parseFloat(newPrice);
+
+localStorage.setItem(
+"products",
+JSON.stringify(products)
+);
+
+renderProducts();
+renderProductList();
+
+}
+
+}
 /* PRODUCT SELECT */
 
 function selectProduct(name, price, event) {
@@ -23,6 +236,31 @@ function selectProduct(name, price, event) {
   event.currentTarget.classList.add('active-product');
 }
 
+
+function deleteProduct(id){
+
+if(
+!confirm(
+"Delete Product?"
+)
+){
+return;
+}
+
+products =
+products.filter(
+p=>p.id!==id
+);
+
+localStorage.setItem(
+"products",
+JSON.stringify(products)
+);
+
+renderProducts();
+renderProductList();
+
+}
 /* CUSTOMER POPUP */
 
 function openCustomerPopup() {
@@ -96,6 +334,7 @@ function addToCart() {
 
   cart.push(item);
   allOrders.push(item);
+  saveData();
 
   renderCart();
   updateQRCode();
@@ -149,6 +388,24 @@ function renderCart() {
   document.getElementById('total')
   .innerText = grandTotal.toFixed(2);
 }
+/* Save */
+function saveData() {
+
+  localStorage.setItem(
+    "cart",
+    JSON.stringify(cart)
+  );
+
+  localStorage.setItem(
+    "allOrders",
+    JSON.stringify(allOrders)
+  );
+
+  localStorage.setItem(
+    "products",
+    JSON.stringify(products)
+  );
+}
 
 /* QR */
 
@@ -168,7 +425,13 @@ function updateQRCode() {
 
 function deleteItem(index) {
 
-  cart.splice(index, 1);
+  if(!confirm("Delete this item?")){
+    return;
+  }
+
+  cart.splice(index,1);
+
+  saveData();
 
   renderCart();
   updateQRCode();
@@ -195,7 +458,13 @@ function editItem(index) {
 
 function newOrder() {
 
+  if(!confirm("Start New Order?")){
+    return;
+  }
+
   cart = [];
+
+  saveData();
 
   renderCart();
   updateQRCode();
@@ -373,7 +642,7 @@ function checkAdminPassword() {
   let pass =
   document.getElementById('adminPassword').value;
 
-  if (pass === ADMIN_PASSWORD) {
+  if(pass === ADMIN_PASSWORD){
 
     closeAdminPopup();
 
@@ -383,9 +652,10 @@ function checkAdminPassword() {
     document.getElementById('adminSection')
     .style.display = 'block';
 
-  } else {
+  }else{
 
     alert('Wrong Password');
+
   }
 }
 
@@ -423,8 +693,8 @@ function updateAdminPanel() {
   document.getElementById('totalOrders')
   .innerText = allOrders.length;
 
-  let totalSales = 0;
-
+let totalSales = 0;
+let dueAmount = 0;
   const ordersTable =
   document.getElementById('ordersTable');
 
@@ -441,20 +711,25 @@ function updateAdminPanel() {
   }
 
   filteredOrders.forEach((order, index) => {
+    if(order.paymentMode === "Due"){
+    dueAmount += order.total;
+}
 
     totalSales += order.total;
 
     ordersTable.innerHTML += `
-      <tr>
-        <td>${index + 1}</td>
-        <td>${order.customer}</td>
-        <td>${order.name}</td>
-        <td>${order.weightDisplay}</td>
-        <td>₹${order.total.toFixed(2)}</td>
-        <td>${order.date}</td>
-      </tr>
-    `;
+<tr>
+  <td>${index + 1}</td>
+  <td>${order.customer}</td>
+  <td>${order.paymentMode || '-'}</td>
+  <td>${order.name}</td>
+  <td>${order.weightDisplay}</td>
+  <td>₹${order.total.toFixed(2)}</td>
+  <td>${order.date}</td>
+</tr>
+`;
   });
+  
 
   document.getElementById('totalSales')
   .innerText =
@@ -462,5 +737,12 @@ function updateAdminPanel() {
 }
 
 /* INIT */
+
+renderProducts();
+renderProductList();
+
+renderCart();
+
+updateAdminPanel();
 
 updateQRCode();
